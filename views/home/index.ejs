@@ -1,0 +1,89 @@
+<div id="app" class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar-left" :class="[ showSchedule ? 'sidebar' : 'sidebar inactive' ]">
+        <div class="sidebar-header">
+            <h3>Schedule</h3>
+        </div>
+        <ul class="list-unstyled components">
+            <p>
+                <label for="datepicker">Date</label>
+                <datepicker name="datepicker" v-model="date"></datepicker>
+            </p>
+            <li class="active">
+                <a href="#allSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">All</a>
+                <ul class="collapse list-unstyled" id="allSubmenu">
+                    <record-display 
+                        v-for="(record, index) in records" 
+                        :key="record.id" 
+                        :record="JSON.stringify(record)" 
+                        @mouseover="blurForm = true" 
+                        @mouseleave="blurForm = false" 
+                        @click="setRecord(record)"
+                    ></record-display>
+                </ul>
+            </li>
+            <li>
+                <a href="#arrivedSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Arrived</a>
+                <ul class="collapse list-unstyled" id="arrivedSubmenu">
+                    <record-display 
+                        v-for="(record, index) in arrived" 
+                        :key="record.id" 
+                        :record="JSON.stringify(record)" 
+                        @mouseover="blurForm = true" 
+                        @mouseleave="blurForm = false" 
+                        @click="setRecord(record)"
+                    ></record-display>
+                </ul>
+            </li>
+            <li>
+                <a href="#incompleteSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Incomplete</a>
+                <ul class="collapse list-unstyled" id="incompleteSubmenu">
+                    <record-display 
+                        v-for="(record, index) in incomplete" 
+                        :key="record.id" 
+                        :record="JSON.stringify(record)" 
+                        @mouseover="blurForm = true" 
+                        @mouseleave="blurForm = false" 
+                        @click="setRecord(record)"
+                    ></record-display>
+                </ul>
+            </li>
+        </ul>
+
+    </nav>
+    <!-- Sidebar -->
+    <nav id="sidebar-left" class="sidebar" v-if="record != null && !showSchedule">
+        <div class="sidebar-header">
+            <h3>All visits</h3>
+        </div>
+        <ul class="list-unstyled components">
+            <record-display 
+                v-for="(record, index) in patientRecords" 
+                :key="record.id" 
+                :record="JSON.stringify(record)" 
+                :complete-display="false" 
+                @mouseover="blurForm = true" 
+                @mouseleave="blurForm = false" 
+                @click="setRecord(record)"
+            ></record-display>
+        </ul>
+    </nav>
+    <!-- Page Content -->
+    <div id="content">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg">
+                <button type="button" id="sidebarCollapse" class="btn btn-info" v-show="record" @click="showSchedule = !showSchedule">
+                    <i class="fas fa-align-left"></i>
+                    <span> {{ showSchedule ? ' Show patient records' : ' Show schedule' }}</span>
+                </button>
+                <div class="col-sm-4">
+                    <search-records @focus="blurForm = true" @focusout="blurForm = false" @select-record="setRecord"></search-records>
+                </div>
+            </nav>
+            <record-form v-if="record != null" :class="{ blur: blurForm }" :record="JSON.stringify(record)" @record-change="fetchRecords"></record-form>
+        </div>
+    </div>
+
+</div>
+
+    
